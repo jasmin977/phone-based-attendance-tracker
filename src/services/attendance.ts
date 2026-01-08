@@ -38,7 +38,6 @@ export const addAttendance = async (
   );
   const lastType =
     lastAttendance.length > 0 ? lastAttendance[0].type : undefined;
-  console.log("🚀 ~ addAttendance ~ lastType:", lastType);
 
   // 2️⃣ Decide new type
   //if its new day set to IN else toggle
@@ -47,7 +46,6 @@ export const addAttendance = async (
   const lastDate = lastAttendance.length > 0 ? lastAttendance[0].date : null;
   const newType: "IN" | "OUT" =
     lastDate !== date ? "IN" : lastType === "IN" ? "OUT" : "IN";
-  console.log("🚀 ~ addAttendance ~ newType:", newType);
 
   // 3️⃣ Create date and time
   const time = now.toTimeString().slice(0, 5);
