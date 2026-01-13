@@ -50,12 +50,11 @@ export default function PinCode({
           setLocked(false);
           setAttempts(0);
           setSecretBadge("");
-
           return LOCK_DURATION;
         }
         return prev - 1;
       });
-    }, 1000);
+    }, 500);
 
     return () => clearInterval(timer);
   }, [locked]);
@@ -130,6 +129,7 @@ export default function PinCode({
             onPress={() => {
               setSecretBadge("");
               onClose();
+              setError(null);
             }}
           >
             <Text style={styles.cancelText}>✕</Text>
