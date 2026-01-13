@@ -60,11 +60,7 @@ export default function HomeScreen() {
 
     const isValid = await isSecretBadgeValid(selectedEmployee.id, secretBadge);
     if (!isValid) {
-      Alert.alert(
-        "❌ Badge invalide",
-        "Badge secret invalide. Veuillez réessayer."
-      );
-      return;
+      return Promise.reject("Badge invalide");
     }
 
     // call your check-in/out function

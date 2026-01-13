@@ -50,7 +50,7 @@ export default function PinCode({
           setLocked(false);
           setAttempts(0);
           setSecretBadge("");
-          setError(null);
+
           return LOCK_DURATION;
         }
         return prev - 1;
@@ -81,7 +81,7 @@ export default function PinCode({
             setLoading(false);
             setSecretBadge("");
           });
-      }, 2000); // ⏳ fake 2 seconds
+      }, 1000); // ⏳ fake 1 seconds
 
       return () => clearTimeout(timer);
     }
