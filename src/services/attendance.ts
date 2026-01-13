@@ -69,6 +69,7 @@ export const addAttendance = async (
     time,
     type: newType,
   };
+  console.log("🚀 ~ addAttendance ~ newAttendance:", newAttendance);
 
   return newAttendance;
 };

@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
 import { initDB } from "./src/db/database";
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import HomeScreen from "./src/screens/HomeScreen";
 import EmployeesScreen from "./src/screens/EmployeesScreen";
 import HistoryScreen from "./src/screens/HistoryScreen";
@@ -27,8 +27,15 @@ export default function App() {
 
   if (!ready) {
     return (
-      <View>
-        <Text>Loading...</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center", // Centers vertically
+          alignItems: "center", // Centers horizontally
+          backgroundColor: "#f5f5f5",
+        }}
+      >
+        <ActivityIndicator size="large" color="#007AFF" />
       </View>
     );
   }

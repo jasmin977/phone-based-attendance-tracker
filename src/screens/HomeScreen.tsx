@@ -2,13 +2,10 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  Button,
-  ScrollView,
   TouchableOpacity,
-  TextInput,
-  Modal,
   StyleSheet,
   FlatList,
+  Alert,
 } from "react-native";
 import {
   getAllEmployees,
@@ -18,6 +15,8 @@ import {
 import { handleCheckInOut } from "../services/attendance";
 import { Ionicons } from "@expo/vector-icons"; // for success icon
 import { AttendanceType, Employee } from "../types/Employee";
+import PinCode from "../components/PinCode";
+import Header from "../components/Header";
 
 type EmployeeWithStatus = Employee & { lastAttendanceType?: AttendanceType };
 
@@ -26,7 +25,6 @@ export default function HomeScreen() {
   const [selectedEmployee, setSelectedEmployee] =
     useState<EmployeeWithStatus | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [secretBadge, setSecretBadge] = useState("");
   const [successMessage, setSuccessMessage] = useState<null | AttendanceType>(
     null
   );
@@ -49,32 +47,23 @@ export default function HomeScreen() {
   }, []);
 
   // Greeting
-  const now = new Date();
-  const hours = now.getHours();
-  const greeting = hours < 18 ? "Bonjour 🌞" : "Bonsoir 🌃";
-
-  // Format date in French
-  const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-  const formattedDate = dateFormatter.format(now);
 
   // Handle check-in/out modal
   const handleEmployeePress = (employee: Employee) => {
     setSelectedEmployee(employee);
-    setSecretBadge("");
+
     setModalVisible(true);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (secretBadge: string) => {
     if (!selectedEmployee) return;
 
     const isValid = await isSecretBadgeValid(selectedEmployee.id, secretBadge);
     if (!isValid) {
-      alert("Badge incorrect");
+      Alert.alert(
+        "❌ Badge invalide",
+        "Badge secret invalide. Veuillez réessayer."
+      );
       return;
     }
 
@@ -98,8 +87,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.greeting}>{greeting}</Text>
-      <Text style={styles.date}>{formattedDate}</Text>
+      <Header />
 
       {employees.length === 0 && !refreshing && (
         <Text style={styles.empty}>
@@ -124,7 +112,7 @@ export default function HomeScreen() {
                 styles.statusBadge, // optional if you want padding and borderRadius
               ]}
             >
-              {item.lastAttendanceType === "IN" ? "Present" : "Absent"}
+              {item.lastAttendanceType === "IN" ? "En poste" : "Hors poste"}
             </Text>
           </TouchableOpacity>
         )}
@@ -134,41 +122,14 @@ export default function HomeScreen() {
       />
 
       {/* Modal for secret badge */}
-      <Modal
+      <PinCode
+        pinLength={selectedEmployee?.secretBadge?.length}
+        employeeName={selectedEmployee?.fullName}
         visible={modalVisible}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>
-              Badge de {selectedEmployee?.fullName}
-            </Text>
-            <TextInput
-              value={secretBadge}
-              onChangeText={setSecretBadge}
-              placeholder="Entrez le badge 🔒"
-              style={styles.input}
-            />
-
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={[styles.button, styles.cancelButton]}
-              >
-                <Text style={styles.cancelBttonText}>Annuler</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.confirmButton]}
-                onPress={handleConfirm}
-              >
-                <Text style={styles.buttonText}>Confirmer</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setModalVisible(false)}
+        onConfirm={handleConfirm}
+        lastType={selectedEmployee?.lastAttendanceType}
+      />
 
       {/* Success message */}
       {successMessage && (
@@ -190,14 +151,7 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     backgroundColor: "#f5f5f5",
   },
-  greeting: { fontSize: 28, fontWeight: "bold", marginBottom: 5 },
-  date: {
-    fontSize: 12,
-    fontWeight: "600",
-    marginBottom: 20,
-    color: "#888",
-    fontStyle: "italic",
-  },
+
   title: { fontSize: 22, fontWeight: "600", marginBottom: 10 },
   scroll: { maxHeight: "auto" },
   employeeButton: {
@@ -230,8 +184,8 @@ const styles = StyleSheet.create({
   },
 
   absentStatus: {
-    backgroundColor: "#fcb5ac97",
-    color: "#ff6f61",
+    backgroundColor: "#dddddd95",
+    color: "#777373",
   },
   presentStatus: {
     backgroundColor: "#a2f3ba8f",
@@ -239,14 +193,7 @@ const styles = StyleSheet.create({
   },
 
   employeeText: { fontSize: 14, color: "#535353", fontWeight: "500" },
-  modalBackground: {
-    flex: 1,
-    justifyContent: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    padding: 20,
-  },
-  modalContainer: { backgroundColor: "#fff", borderRadius: 15, padding: 20 },
-  modalTitle: { fontSize: 20, marginBottom: 15, fontWeight: "bold" },
+
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
@@ -256,7 +203,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
   },
-  modalButtons: { flexDirection: "row", justifyContent: "space-between" },
   successContainer: {
     position: "absolute",
     top: "40%",
@@ -277,21 +223,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: 5, // space between buttons
   },
-  cancelButton: {
-    backgroundColor: "#cccccc7d", // gray
-  },
-  confirmButton: {
-    backgroundColor: "#007BFF", // blue
-  },
+
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
   },
-  cancelBttonText: {
-    color: "#757575",
-    fontWeight: "bold",
-  },
-
   empty: {
     textAlign: "center",
     marginTop: 30,

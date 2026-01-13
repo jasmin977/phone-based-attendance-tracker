@@ -8,6 +8,7 @@ import {
   Modal,
   Button,
   TextInput,
+  Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { getAllEmployees } from "../services/employees";
@@ -91,7 +92,10 @@ export default function HistoryScreen({ navigation }: any) {
     if (password === correctPassword) {
       setLocked(false);
     } else {
-      alert("Mot de passe incorrect");
+      Alert.alert(
+        "🔑 Authentification",
+        "Oups ! Ce n'est pas le bon mot de passe. 💡 Besoin d'aide ?"
+      );
     }
   };
 
@@ -106,7 +110,7 @@ export default function HistoryScreen({ navigation }: any) {
         }}
       >
         {/* Modal for secret badge */}
-        <Modal visible={locked} animationType="slide">
+        <Modal visible={locked} animationType="fade">
           <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Authentification Requise</Text>
@@ -114,6 +118,7 @@ export default function HistoryScreen({ navigation }: any) {
                 value={password}
                 onChangeText={setPassword}
                 placeholder="Entrez le mot de passe 🔒"
+                inputMode="decimal"
                 style={styles.input}
               />
               <View style={styles.modalButtons}>

@@ -86,11 +86,17 @@ export default function EmployeesScreen({ navigation }: any) {
 
   const handleAddEmployee = async () => {
     if (nameInput.trim() === "") {
-      Alert.alert("Erreur", "Le nom est obligatoire");
+      Alert.alert(
+        "📍 Information manquante",
+        "Le nom est obligatoire pour créer une fiche employé. 🪪"
+      );
       return;
     }
     if (badgeInput.trim() === "") {
-      Alert.alert("Erreur", "Le badge secret est obligatoire");
+      Alert.alert(
+        "📍 Information manquante",
+        "Le badge secret est obligatoire pour créer une fiche employé. 🪪"
+      );
       return;
     }
 
@@ -106,7 +112,10 @@ export default function EmployeesScreen({ navigation }: any) {
     if (password === correctPassword) {
       setLocked(false);
     } else {
-      alert("Mot de passe incorrect");
+      Alert.alert(
+        "🔑 Authentification",
+        "Oups ! Ce n'est pas le bon mot de passe. 💡 Besoin d'aide ?"
+      );
     }
   };
   const renderItem = ({ item }: { item: Employee }) => (
@@ -139,13 +148,14 @@ export default function EmployeesScreen({ navigation }: any) {
         }}
       >
         {/* Modal for secret badge */}
-        <Modal visible={locked} animationType="slide">
+        <Modal visible={locked} animationType="fade">
           <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Authentification Requise</Text>
               <TextInput
                 value={password}
                 onChangeText={setPassword}
+                inputMode="decimal"
                 placeholder="Entrez le mot de passe 🔒"
                 style={styles.input}
               />
@@ -197,7 +207,7 @@ export default function EmployeesScreen({ navigation }: any) {
       />
 
       {/* Edit Modal */}
-      <Modal visible={editModalVisible} animationType="slide" transparent>
+      <Modal visible={editModalVisible} animationType="fade" transparent>
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Modifier Employé</Text>
@@ -209,6 +219,7 @@ export default function EmployeesScreen({ navigation }: any) {
             />
             <TextInput
               value={badgeInput}
+              inputMode="decimal"
               onChangeText={setBadgeInput}
               placeholder="Badge secret"
               style={styles.input}
@@ -232,7 +243,7 @@ export default function EmployeesScreen({ navigation }: any) {
       </Modal>
 
       {/* Add Modal */}
-      <Modal visible={addModalVisible} animationType="slide" transparent>
+      <Modal visible={addModalVisible} animationType="fade" transparent>
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Ajouter Employé</Text>
@@ -246,6 +257,7 @@ export default function EmployeesScreen({ navigation }: any) {
               value={badgeInput}
               onChangeText={setBadgeInput}
               placeholder="Badge secret"
+              inputMode="decimal"
               style={styles.input}
             />
 
